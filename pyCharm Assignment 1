@@ -1,0 +1,112 @@
+#import several libraries to be used in the code
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+#open firefox, wait 30 seconds to load the browser and maximize the window
+driver = webdriver.Firefox()
+driver.implicitly_wait(30)
+driver.maximize_window()
+#navigate to this url
+driver.get("https://navreet.herokuapp.com/")
+#clear the text box
+driver.find_element_by_id("email").clear()
+#enter in Student in the text box
+driver.find_element_by_id("email").send_keys("Student")
+#clear the text box and enter in the password
+driver.find_element_by_id("password").clear()
+driver.find_element_by_id("password").send_keys("abc123")
+#click login
+driver.find_element_by_id("login").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+'''#Target the Table data for likes and then print the # of likes
+print ("There are " + (driver.find_element_by_xpath("/html/body/form/div/div/div[3]/div[2]/div/div/div[3]/table/tbody/tr/td[1]")).text + " likes on the first post.")
+#click the like button
+driver.find_element_by_id("likehome1").click()
+#Print the new amount of likes
+print ("I like it too, there are now " + (driver.find_element_by_xpath("/html/body/form/div/div/div[3]/div[2]/div/div/div[3]/table/tbody/tr/td[1]")).text + " likes!")
+'''#clear the post text box
+driver.find_element_by_id("post").clear()
+#type first timers FTW
+driver.find_element_by_id("post").send_keys("first timers FTW")
+#click post
+driver.find_element_by_id("submit").click()
+'''#wait for page to load the post i just made's like button
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, 'likehome4'))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+print
+#click my post's like button
+driver.find_element_by_id("likehome4").click()
+#wait fo my post's reply button to appear
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, 'replyhome4'))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#click the reply button
+driver.find_element_by_id("replyhome4").click()
+#wait for the reply text box to appear
+timeout = 30
+try:
+    element_present = EC.presence_of_element_located((By.ID, 'replyContenet4'))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type something into the reply text box
+driver.find_element_by_id("replyContenet4").send_keys("first timer... pshh")
+#post the reply
+driver.find_element_by_id("repEnterhome4").click()
+#wait for the comment to post
+timeout = 30
+try:
+    element_present = EC.presence_of_element_located((By.ID, 'comments4'))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#view the comments
+driver.find_element_by_id('comments4').click()
+#wait for the page to reload and load the logout button
+timeout = 10
+try:
+    element_present = EC.presence_of_element_located((By.ID, 'post'))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#click the log out button
+driver.find_element_by_partial_link_text('LogOut').click()
+driver.find_element_by_partial_link_text('LogOut').click()
+#wait for the new user element to load
+timeout = 10
+try:
+    element_present = EC.presence_of_element_located((By.ID, "email"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#click new user registration link
+driver.find_element_by_xpath("//a[2]").click()
+#wait for the search box to load once logging in
+timeout = 10
+try:
+    element_present = EC.presence_of_element_located((By.ID, "search"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#click the search box
+driver.find_element_by_id("search").click()
+#clear the search box
+driver.find_element_by_id("search").clear()
+#enter Navreet and hit enter
+driver.find_element_by_id("search").send_keys("Navreet" + Keys.RETURN)'''
