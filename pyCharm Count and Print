@@ -1,0 +1,84 @@
+#import several libraries to be used in the code
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+#open firefox, wait 30 seconds to load the browser and maximize the window
+driver = webdriver.Firefox()
+driver.implicitly_wait(30)
+driver.maximize_window()
+#navigate to this url
+driver.get("https://navreet.herokuapp.com/")
+#clear the text box
+driver.find_element_by_id("email").clear()
+#enter in Student in the text box
+driver.find_element_by_id("email").send_keys("Student")
+#clear the text box and enter in the password
+driver.find_element_by_id("password").clear()
+driver.find_element_by_id("password").send_keys("abc123")
+#click login
+driver.find_element_by_id("login").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type first timers FTW
+driver.find_element_by_id("post").send_keys("first timers FTW")
+#click post
+driver.find_element_by_id("submit").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type
+driver.find_element_by_id("post").send_keys("This is my second time!")
+#click post
+driver.find_element_by_id("submit").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type
+driver.find_element_by_id("post").send_keys("Yay for learning.")
+#click post
+driver.find_element_by_id("submit").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type
+driver.find_element_by_id("post").send_keys("Hope it translates to the job market...")
+#click post
+driver.find_element_by_id("submit").click()
+#wait for the page to load the post text box
+timeout = 5
+try:
+    element_present = EC.presence_of_element_located((By.ID, "post"))
+    WebDriverWait(driver, timeout).until(element_present)
+except TimeoutException:
+    print "Timed out waiting for page to load"
+#type
+driver.find_element_by_id("post").send_keys("With patience and perseverance, it will.")
+#click post
+driver.find_element_by_id("submit").click()
+#print the amount of posts on the page
+allPosts = driver.find_elements_by_xpath("/html/body/form/div/div/div[3]/div[2]/div/div/div[2]")
+print "There are " + str(len(allPosts)) + " posts."
+allPosts = driver.find_elements_by_xpath("/html/body/form/div/div/div[3]/div[2]/div/div/div[2]")
+for posts in allPosts:
+    print "This is what everyone had to say:"
+    print posts.text
