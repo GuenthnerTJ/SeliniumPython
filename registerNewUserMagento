@@ -1,0 +1,50 @@
+import unittest
+from selenium import webdriver
+import os, time
+from time import gmtime, strftime
+
+class RegistrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        #create new Firefox session
+        cls.driver = webdriver.Firefox()
+        #self.driver.implicitly_wait(30)
+        cls.driver.maximize_window()
+
+        #navigate to the applications home page
+        cls.driver.get("http://www.aspire-global.net/SQALab/")
+        #direct link to registration page
+        #cls.driver.get("http://www.aspire-global.net/SQALab/customer/account/create/")
+    #Navigate to the registration page
+    def test_1_register_user(self):
+        account_link = self.driver.find_element_by_partial_link_text("Account")
+        account_link.click()
+        register_link = self.driver.find_element_by_link_text("Register")
+        register_link.click()
+        time.sleep(2)
+    #Enter new user information
+    def test_2_enter_new_user_information(self):
+        first_name_field = self.driver.find_element_by_id("firstname")
+        first_name_field.send_keys("TJ")
+        last_name_field = self.driver.find_element_by_id("lastname")
+        last_name_field.send_keys("Guenthner")
+        email_field = self.driver.find_element_by_id("email_address")
+        user_name = "user4_" + strftime("%Y%m%d%H%M%S", gmtime()) + "@gmail.com"
+        email_field.send_keys(user_name)
+        password_field = self.driver.find_element_by_id("password")
+        password_field.send_keys("abc123")
+        confirm_password_field = self.driver.find_element_by_id("confirmation")
+        confirm_password_field.send_keys("abc123")
+        subscribe = self.driver.find_element_by_id("is_subscribed")
+        subscribe.click()
+        register_button = self.driver.find_element_by_xpath("//form[@id='form-validate']/div[2]/button")
+        register_button.click()
+
+    @classmethod
+    def tearDownClass(cls):
+        # close the browser window
+        cls.driver.quit()
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
