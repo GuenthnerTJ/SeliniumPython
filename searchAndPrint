@@ -1,0 +1,77 @@
+import unittest
+from selenium import webdriver
+import os, time
+
+class SearchTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        #create new Firefox session
+        cls.driver = webdriver.Firefox()
+        #self.driver.implicitly_wait(30)
+        cls.driver.maximize_window()
+
+        #navigate to the applications home page
+        cls.driver.get("http://www.aspire-global.net/SQALab/")
+
+    def test_search_for_shaker(self):
+        #get the search textbox
+        self.search_field = self.driver.find_element_by_name("q")
+        self.search_field.clear()
+        time.sleep(2)
+
+        #enter the search ketword and submit
+        self.search_field.send_keys("salt shaker")
+        self.search_field.submit()
+        time.sleep(2)
+        # get all the anchor elements which have product names displayed
+        # currently on result page using find_elements_by_xpath method
+        products = self.driver. \
+            find_elements_by_xpath("//h2[@class='product-name']/a")
+        self.assertEqual(1, len(products))
+        for product in products:
+            print (product.text)
+
+    def test_search_for_watches(self):
+        # get the search textbox
+        self.search_field = self.driver.find_element_by_name("q")
+        self.search_field.clear()
+        time.sleep(2)
+
+        # enter the search ketword and submit
+        self.search_field.send_keys("watches")
+        self.search_field.submit()
+        time.sleep(2)
+
+        # get all the anchor elements which have product names displayed
+        # currently on result page using find_elements_by_xpath method
+        products = self.driver.\
+            find_elements_by_xpath("//h2[@class='product-name']/a")
+        self.assertEqual(1, len(products))
+        for product in products:
+            print (product.text)
+
+    def test_search_for_pants(self):
+        # get the search textbox
+        self.search_field = self.driver.find_element_by_name("q")
+        self.search_field.clear()
+        time.sleep(2)
+
+        # enter the search ketword and submit
+        self.search_field.send_keys("pants")
+        self.search_field.submit()
+        time.sleep(2)
+
+        # get all the anchor elements which have product names displayed
+        # currently on result page using find_elements_by_xpath method
+        products = self.driver.\
+            find_elements_by_xpath("//h2[@class='product-name']/a")
+        self.assertEqual(4, len(products))
+        for product in products:
+            print (product.text)
+    @classmethod
+    def tearDownClass(cls):
+        #close the browser window
+        cls.driver.quit()
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
