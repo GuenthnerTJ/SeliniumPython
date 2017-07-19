@@ -1,0 +1,85 @@
+import xlrd, unittest, os, time, sys
+from time import gmtime, strftime
+from selenium import webdriver
+import os, time
+from xlrd import open_workbook,cellname
+
+class SearchExcelDDT(unittest.TestCase):
+    def setUp(self):
+        #get the path of the chromedriver
+        path = os.getcwd()
+        print (path)
+        #chromedriver does not assume "\chromedriver.exe" at the end, so we set it with the path
+        chrome_driver_path = path + "\chromedriver.exe"
+        #create a new Chrome session
+        driver = webdriver.Chrome(chrome_driver_path)
+        self.driver = driver
+        #driver.maximize_window()
+        driver.get("http://www.aspire-global.net/SQALab/customer/account/create/")
+
+    def test_register_new_user(self):
+        print (sys.path)
+        driver = self.driver
+        #get/build data values
+
+        book = open_workbook("TestData.xlsx")
+        sheet = book.sheet_by_index(0)
+        print (sheet.name)
+        print (sheet.ncols)
+        for row_idx in range(sheet.nrows):
+            #create_account_button.click()
+            driver.get("http://www.aspire-global.net/SQALab/customer/account/create/")
+            #check title
+            self.assertEqual("Create New Customer Account", driver.title)
+
+            #get all the fields from Create an Account form
+            first_name_field = self.driver.find_element_by_id("firstname")
+            last_name_field = self.driver.find_element_by_id("lastname")
+            middle_name_field = self.driver.find_element_by_id("middlename")
+            email_field = self.driver.find_element_by_id("email_address")
+            password_field = self.driver.find_element_by_id("password")
+            confirm_password_field = self.driver.find_element_by_id("confirmation")
+            subscribe = self.driver.find_element_by_id("is_subscribed")
+            submit_button = driver.\
+                find_element_by_xpath("//button[@title='Register']")
+
+            #check Sign Up for NewsLetter is unchecked
+            #self.assertFalse(subscribe.is_selected())
+            user_name = "user_" + strftime("%Y%m%d%H%M%S", gmtime()) + "@"
+            print (sheet.row(row_idx))
+            firstname1 = sheet.cell(row_idx, 0).value
+            lastname1 = sheet.cell(row_idx, 1).value
+            middlename1 = sheet.cell(row_idx, 2).value
+            emailaddress1 = user_name + sheet.cell(row_idx, 3).value
+            passwordtext1 = sheet.cell(row_idx, 4).value
+            confirmpasswordtext1 = sheet.cell(row_idx, 5).value
+            subscription1 = sheet.cell(row_idx, 6).value
+
+            #fill out all the fields
+            first_name_field.send_keys(firstname1)
+            middle_name_field.send_keys(middlename1)
+            last_name_field.send_keys(lastname1)
+            email_field.send_keys(emailaddress1)
+            password_field.send_keys(passwordtext1)
+            confirm_password_field.send_keys(confirmpasswordtext1)
+            #if subscription yes, click box
+            #if subscription1 == "Y":
+                #subscribe.click()
+            #click the submit button
+            submit_button.click()
+
+            time.sleep(3)
+
+            account = driver.find_element_by_xpath("html/body/div/div[2]/header/div/div[2]/div/a/span[2]")
+            account.click()
+            logout = driver.find_element_by_link_text("Log Out")
+            logout.click()
+
+            time.sleep(3)
+
+        def tearDown(self):
+            driver = self.driver
+            driver.quit()
+
+    if __name__ == '__main__':
+        unittest.main(verbosity=2)
