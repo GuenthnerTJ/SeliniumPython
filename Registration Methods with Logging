@@ -1,0 +1,174 @@
+import unittest, os, logging
+from selenium import webdriver
+from selenium.webdriver.support.ui import Select #import a library to select dropdown menus and radio buttons
+import time, datetime #imports the date and time
+from time import gmtime, strftime
+from selenium.common.exceptions import NoSuchElementException
+class RegistrationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        path = os.getcwd()
+        print (path)
+
+        chrome_driver_path = path + "\chromedriver.exe"
+
+        cls.driver = webdriver.Chrome(chrome_driver_path)
+        #self.driver.implicitly_wait(30)
+        #cls.driver.maximize_window()
+
+        cls.driver.get("http://www.aspire-global.net/SQALab/")
+        filename = 'debug' + strftime("%Y%m%d%H%M%S", gmtime()) + ".log"
+        logging.basicConfig(filename=filename, filemode="w", level=logging.INFO)
+        print"Debug file is "+ filename
+        #direct link to registration page
+        #cls.driver.get("http://www.aspire-global.net/SQALab/customer/account/create/")
+    #Navigate to the registration page
+    def test_1_register_user(self):
+        logging.info("Register New User")
+        self.assertEqual("Madison Island", self.driver.title)
+        logging.info("We're on the home page")
+        account_link = self.driver.find_element_by_xpath('//*[@id="header"]/div/div[2]/div/a/span[2]')
+        account_link.click()
+        register_link = self.driver.find_element_by_xpath('//*[@id="header-account"]/div/ul/li[5]/a')
+        register_link.click()
+        time.sleep(2)
+        self.assertEqual("Create New Customer Account", self.driver.title)
+        logging.info("We're on the registration page.")
+        #Enter new user information
+        try:
+            first_name_field = self.driver.find_element_by_id("firstname")
+            last_name_field = self.driver.find_element_by_id("lastname")
+            middle_name_field = self.driver.find_element_by_id("middlename")
+            email_field = self.driver.find_element_by_id("email_address")
+            password_field = self.driver.find_element_by_id("password")
+            confirm_password_field = self.driver.find_element_by_id("confirmation")
+            subscribe = self.driver.find_element_by_id("is_subscribed")
+            register_button = self.driver.find_element_by_xpath("//form[@id='form-validate']/div[2]/button")
+        except NoSuchElementException:
+            print ("element missing")
+            st = datetime.datetime.\
+                fromtimestamp(time.time()).strftime("%Y%m%d%H%M%S")
+            file_name = "Page missing element" + st + '.png'
+            self.driver.save_screenshot(file_name)
+            logging.error("Missing expected element from registration page.")
+            raise
+        self.assertTrue(first_name_field.is_enabled() and last_name_field.is_enabled() and email_field.is_enabled()
+                        and subscribe.is_enabled() and password_field.is_enabled()
+                        and confirm_password_field.is_enabled() and register_button.is_enabled())
+        first_name_field = self.driver.find_element_by_id("firstname")
+        first_name_field.send_keys("TJ")
+        last_name_field = self.driver.find_element_by_id("lastname")
+        last_name_field.send_keys("Guenthner")
+        email_field = self.driver.find_element_by_id("email_address")
+        user_name = "user4_" + strftime("%Y%m%d%H%M%S", gmtime()) + "@gmail.com"
+        email_field.send_keys(user_name)
+        password_field = self.driver.find_element_by_id("password")
+        password_field.send_keys("abc123")
+        confirm_password_field = self.driver.find_element_by_id("confirmation")
+        confirm_password_field.send_keys("abc123")
+        subscribe = self.driver.find_element_by_id("is_subscribed")
+        subscribe.click()
+        register_button = self.driver.find_element_by_xpath("//form[@id='form-validate']/div[2]/button")
+        logging.info("Entered all my info on teh registration page")
+        register_button.click()
+        self.assertEqual("My Account", self.driver.title)
+        logging.info("Now we're registered")
+    def test_2_add_item_to_cart(self):
+        logging.info("Start Adding To Cart")
+        driver = self.driver
+        driver.search_field = self.driver.find_element_by_id("search")
+        driver.search_field.clear()
+        time.sleep(2)
+
+        # enter the search ketword and submit
+        driver.search_field.send_keys("phones")
+        driver.search_field.submit()
+        time.sleep(2)
+        logging.info("Search for phones")
+        self.assertEqual("Search results for: 'phones'", self.driver.title)
+        # get all the anchor elements which have product names displayed
+        # currently on result page using find_elements_by_xpath method
+        products = driver.find_elements_by_xpath("//h2[@class='product-name']/a")
+        time.sleep(2)
+
+        # get the number of anchor elements found
+        print ("Found " + str(len(products)) + " products:")
+        logging.info("Search Results:")
+
+        # iterate through each anchor element and
+        # print the text that is the name of the product
+        for product in products:
+            print (product.text)
+            logging.info(product.text)
+
+        driver.earbuds = self.driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/div[2]/div[2]/div[3]/ul/li[1]/div/div[2]/button')
+        driver.earbuds.click()
+        time.sleep(2)
+        logging.info("Added earbuds to my cart.")
+
+        driver.search_field = self.driver.find_element_by_id("search")
+        driver.search_field.clear()
+        time.sleep(2)
+
+        driver.search_field.send_keys("phones")
+        driver.search_field.submit()
+        time.sleep(2)
+        logging.info("Searched for phones again.")
+
+        driver.headphones = self.driver.find_element_by_xpath('/html/body/div/div[2]/div[2]/div/div[2]/div[2]/div[3]/ul/li[2]/div/div[3]/button')
+        driver.headphones.click()
+        time.sleep(2)
+        logging.info("Added the headphones to my cart.")
+
+    def test_3_remove_item_from_cart(self):
+        logging.info("Start Removing from Cart")
+        # still on cart window, remove an item
+        driver = self.driver
+        driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/form/table/tbody/tr[1]/td[6]/a").click()
+        time.sleep(2)
+        logging.info("Removed the earbuds from my cart.")
+
+    def test_4_calc_shipping(self):
+        logging.info("Start Shipping Calculation")
+        driver = self.driver
+
+        country = \
+            Select (self.driver.find_element_by_id("country"))
+        country.select_by_index(233)
+        time.sleep(2)
+        region = \
+            Select (driver.find_element_by_name("region_id"))
+        region.select_by_index(31)
+        time.sleep(2)
+
+        city = driver.find_element_by_id("city")
+        city.send_keys("Rockville")
+        zip = driver.find_element_by_id("postcode")
+        zip.send_keys("20855")
+        driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/div[2]/div/div/form/div/button").click()
+        time.sleep(2)
+        logging.info("I'm calculating the estimated shipping cost and already input my address.")
+
+        driver.find_element_by_id("s_method_ups_GND").click()
+        driver.find_element_by_name("do").click()
+        logging.info("I selected ground shipping, the cheapest.")
+        total_cost = driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/div[3]/div/table/tfoot/tr/td[2]/strong/span")
+        shipping_cost = driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/div[3]/div/table/tbody/tr[2]/td[2]/span")
+        products_cost = driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/div[3]/div/table/tbody/tr[1]/td[2]/span")
+        print ("Subtotal = " + products_cost.text)
+        logging.info("Product subtotal: "+ products_cost.text)
+        print ("Shipping and Handling = " + shipping_cost.text)
+        logging.info("Shipping and Handling: " + shipping_cost.text)
+        print ("Total Cost = " + total_cost.text)
+        logging.info("Total Cost: " + total_cost.text)
+        driver.find_element_by_xpath("/html/body/div/div[2]/div[2]/div/div/div[2]/div[3]/div/ul/li/button")
+        time.sleep(2)
+
+    @classmethod
+    def tearDownClass(cls):
+        logging.shutdown()
+        cls.driver.quit()
+
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)
