@@ -1,0 +1,40 @@
+__author__ = "Owner"
+import unittest
+import time, os
+from selenium import webdriver
+
+class CompareProducts(unittest.TestCase):
+    def setUp(self):
+        path = os.getcwd()
+        print (path)
+
+        chrome_driver_path = path + "\chromedriver.exe"
+
+        driver = webdriver.Chrome(chrome_driver_path)
+        self.driver = driver
+        # self.driver.implicitly_wait(30)
+        # cls.driver.maximize_window()
+
+        self.driver.get("http://www.aspire-global.net/SQALab/")
+
+    def test_compare_products_removal_alert(self):
+            search_field = self.driver.find_element_by_name("q")
+            search_field.clear()
+            search_field.send_keys("phones")
+            search_field.submit()
+
+            self.driver.find_element_by_link_text("Add to Compare").click()
+            self.driver.find_element_by_link_text("Clear All").click()
+            alert = self.driver.switch_to.alert
+            alert_text = alert.text
+            self.assertEqual("Are you sure you would like to remove all products from your comparison?", alert_text)
+            time.sleep(5)
+            alert.accept()
+
+
+
+    def tearDown(self):
+        time.sleep(20)
+        self.driver.quit()
+if __name__ == '__main__':
+    unittest.main()
